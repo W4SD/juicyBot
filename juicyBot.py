@@ -5,6 +5,22 @@ import json
 import random
 from bs4 import BeautifulSoup
 
+'''
+Discord bot for general help and gambling related activity
+@toDo: (general)
+    - custom prefix
+    - prefix used, command not found response
+    - import token from txt, add to ignore
+@toDo: (features)
+    - coinFlip
+    - dicing
+    - mySql support
+    - user based wallet
+    - "juicyTokens" -economy system
+    - other gambling games
+
+'''
+
 # command handler class
 
 
