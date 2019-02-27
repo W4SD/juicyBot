@@ -130,13 +130,12 @@ ch.add_command({
 
 def tubeTitler(tubeLink):
     try:
-        print('tubeLink: ' + tubeLink)
-
         url = tubeLink
         response = requests.get(url)
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
-        return soup.title.string
+        splitTitle = soup.title.string.split(' - ')  # remove ' - Youtube' string from title
+        return splitTitle[0]
 
     except Exception as e:
         print('err_tubeLink: ' + tubeLink)
