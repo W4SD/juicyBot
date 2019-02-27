@@ -39,7 +39,7 @@ class CommandHandler:
 
 # create discord client
 client = discord.Client()
-token = 'NTQ2NTAwMjk0Njg3NTg4MzUz.D0z_8Q.mjpR9uy6WvramNfbYs4tBzC2LgI'
+token = 'NTQ2NTAwMjk0Njg3NTg4MzUz.D1hWuQ.DCm_ba0ycd2FJ95cPJ7Nt5zIzhU'
 
 # create the CommandHandler object and pass it the client
 ch = CommandHandler(client)
@@ -101,7 +101,7 @@ ch.add_command({
 
 ## coin flip - commit
 
-
+'''
 def coinFlip(message, client, args):
     try:
 
@@ -116,6 +116,7 @@ ch.add_command({
     'args_name': [],
     'description': 'Flips a coin and prints result'
 })
+'''
 
 # bot is ready
 @client.event
