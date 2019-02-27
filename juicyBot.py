@@ -53,7 +53,6 @@ class CommandHandler:
                 else:
                     break
             elif message.content.startswith('https://www.youtube.com/') or message.content.startswith('https://youtu.be/'):
-            #elif message.content.startswith('https://'):
                 return self.client.send_message(message.channel, 'Video: "{}"'.format(tubeTitler(message.content)))
                 break
             else:
@@ -67,7 +66,7 @@ token = 'NTQ2NTAwMjk0Njg3NTg4MzUz.D1hWuQ.DCm_ba0ycd2FJ95cPJ7Nt5zIzhU'
 # create the CommandHandler object and pass it the client
 ch = CommandHandler(client)
 
-## start commands command
+# start commands command
 
 
 def commands_command(message, client, args):
@@ -76,7 +75,8 @@ def commands_command(message, client, args):
         coms = 'Command list:\n'
         for command in ch.commands:
             coms += '{}.) {} : {}\n'.format(count,
-                                            command['trigger'], command['description'])
+                                            command['trigger'],
+                                            command['description'])
             count += 1
         return coms
     except Exception as e:
@@ -90,10 +90,10 @@ ch.add_command({
     'args_name': [],
     'description': 'All my command are belong to us!'
 })
-## end commands command
+# end commands command
 
 
-## coin flip
+# coin flip
 
 '''
 def coinFlip(message, client, args):
@@ -112,7 +112,7 @@ ch.add_command({
 })
 '''
 
-## youtube link titler
+# youtube link titler
 
 
 def tubeTitler(tubeLink):
@@ -128,7 +128,10 @@ def tubeTitler(tubeLink):
         print('err_tubeLink: ' + tubeLink)
         print(e)
 
+
 # bot is ready
+
+
 @client.event
 async def on_ready():
     try:
@@ -137,8 +140,8 @@ async def on_ready():
     except Exception as e:
         print(e)
 
-# on new message
-@client.event
+
+@client.event  # on new message
 async def on_message(message):
     # if the message is from the bot itself ignore it
     if message.author == client.user:
