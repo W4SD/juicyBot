@@ -3,6 +3,7 @@ import discord
 import requests
 import json
 import random
+from bs4 import BeautifulSoup
 
 # command handler class
 
@@ -35,6 +36,12 @@ class CommandHandler:
                             break
                 else:
                     break
+            elif message.content.startswith('https://www.youtube.com/') or message.content.startswith('https://youtu.be/'):
+            #elif message.content.startswith('https://'):
+                return self.client.send_message(message.channel, 'Video: "{}"'.format(tubeTitler(message.content)))
+                break
+            else:
+                break
 
 
 # create discord client
@@ -117,6 +124,22 @@ ch.add_command({
     'description': 'Flips a coin and prints result'
 })
 '''
+
+## youtube link titler
+
+
+def tubeTitler(tubeLink):
+    try:
+        url = tubeLink
+        response = requests.get(url)
+        html = response.text
+        soup = BeautifulSoup(html, 'html.parser')
+        splitTitle = soup.title.string.split(' - ')  # remove ' - Youtube' string from title
+        return splitTitle[0]
+
+    except Exception as e:
+        print('err_tubeLink: ' + tubeLink)
+        print(e)
 
 # bot is ready
 @client.event
