@@ -57,7 +57,7 @@ ch = CommandHandler(client)
 def commands_command(message, client, args):
     try:
         count = 1
-        coms = '**Commands List**\n'
+        coms = 'Command list:\n'
         for command in ch.commands:
             coms += '{}.) {} : {}\n'.format(count,
                                             command['trigger'], command['description'])
@@ -72,41 +72,12 @@ ch.add_command({
     'function': commands_command,
     'args_num': 0,
     'args_name': [],
-    'description': 'Prints a list of all the commands!'
+    'description': 'All my command are belong to us!'
 })
 ## end commands command
 
-## start ip commad
 
-
-def ip_command(message, client, args):
-    try:
-        req = requests.get('http://ip-api.com/json/{}'.format(args[0]))
-        resp = json.loads(req.content.decode())
-        if req.status_code == 200:
-            if resp['status'] == 'success':
-                template = '**{}**\n**IP: **{}\n**City: **{}\n**State: **{}\n**Country: **{}\n**Latitude: **{}\n**Longitude: **{}\n**ISP: **{}'
-                out = template.format(args[0], resp['query'], resp['city'], resp['regionName'],
-                                      resp['country'], resp['lat'], resp['lon'], resp['isp'])
-                return out
-            elif resp['status'] == 'fail':
-                return 'API Request Failed'
-        else:
-            return 'HTTP Request Failed: Error {}'.format(req.status_code)
-    except Exception as e:
-        print(e)
-
-
-ch.add_command({
-    'trigger': '!ip',
-    'function': ip_command,
-    'args_num': 1,
-    'args_name': ['IP\Domain'],
-    'description': 'Prints information about provided IP/Domain!'
-})
-## end ip command
-
-## coin flip - commit
+## coin flip
 
 '''
 def coinFlip(message, client, args):
