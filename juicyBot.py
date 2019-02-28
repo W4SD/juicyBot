@@ -1,4 +1,7 @@
-# bot.py
+# juicyBot.py
+# Python 3.6.7
+# DEVELOPMENT VERSION
+
 import discord
 import requests
 import json
@@ -8,9 +11,7 @@ from bs4 import BeautifulSoup
 '''
 Discord bot for general help and gambling related activity
 @toDo: (general)
-    - custom prefix
     - prefix used, command not found response
-    - import token from txt, add to ignore
 @toDo: (features)
     - coinFlip
     - dicing
@@ -20,6 +21,10 @@ Discord bot for general help and gambling related activity
     - other gambling games
 
 '''
+
+# define globals
+PREFIX = '€'
+
 
 # command handler class
 
@@ -36,9 +41,9 @@ class CommandHandler:
 
     def command_handler(self, message):
         for command in self.commands:
-            if message.content.startswith(command['trigger']):
+            if message.content.startswith(PREFIX + command['trigger']):
                 args = message.content.split(' ')
-                if args[0] == command['trigger']:
+                if args[0] == PREFIX + command['trigger']:
                     args.pop(0)
                     if command['args_num'] == 0:
                         return self.client.send_message(message.channel, str(command['function'](message, self.client, args)))
@@ -48,20 +53,28 @@ class CommandHandler:
                             return self.client.send_message(message.channel, str(command['function'](message, self.client, args)))
                             break
                         else:
-                            return self.client.send_message(message.channel, 'command "{}" requires {} argument(s) "{}"'.format(command['trigger'], command['args_num'], ', '.join(command['args_name'])))
+                            return self.client.send_message(message.channel,
+                                                            'command "{}" requires {} argument(s) "{}"'.format(command['trigger'],
+                                                             command['args_num'],
+                                                             ', '.join(command['args_name'])))
                             break
                 else:
                     break
-            elif message.content.startswith('https://www.youtube.com/') or message.content.startswith('https://youtu.be/'):
-                return self.client.send_message(message.channel, 'Video: "{}"'.format(tubeTitler(message.content)))
-                break
+
             else:
-                break
+                if message.content.startswith('https://www.youtube.com/') or message.content.startswith('https://youtu.be/'):
+                    return self.client.send_message(message.channel, 'Video: "{}"'.format(tubeTitler(message.content)))
+                    break
 
 
 # create discord client
 client = discord.Client()
-token = 'NTQ2NTAwMjk0Njg3NTg4MzUz.D1hWuQ.DCm_ba0ycd2FJ95cPJ7Nt5zIzhU'
+try:
+    tokenFile = open("discoToken.txt", "r") # paste bot secret token to plain .txt file
+    token = tokenFile.readline()
+    tokenFile.close()
+except e in Exception:
+    print(e)
 
 # create the CommandHandler object and pass it the client
 ch = CommandHandler(client)
@@ -74,23 +87,45 @@ def commands_command(message, client, args):
         count = 1
         coms = 'Command list:\n'
         for command in ch.commands:
-            coms += '{}.) {} : {}\n'.format(count,
-                                            command['trigger'],
-                                            command['description'])
+            coms += '{}{} : {}\n'.format(PREFIX,
+                                         command['trigger'],
+                                         command['description'])
             count += 1
         return coms
     except Exception as e:
-        print(e)
+        print('err@commands_command' + str(e))
 
 
 ch.add_command({
-    'trigger': '!commands',
+    'trigger': 'help',
     'function': commands_command,
     'args_num': 0,
     'args_name': [],
     'description': 'All my command are belong to us!'
 })
 # end commands command
+
+# general info command
+
+
+def postInfo(message, client, args):
+    textLines = []
+    textLines.append('paste a youtube link and I will automagically post the title!')
+
+    infoText = ':)\nWhat else I can do for you:\n'
+    for i in textLines:
+        infoText += '- {}\n'.format(i)
+
+    return infoText
+
+ch.add_command({
+    'trigger': 'info',
+    'function': postInfo,
+    'args_num': 0,
+    'args_name': [],
+    'description': 'How can I help you today?'
+})
+
 
 
 # coin flip
@@ -149,13 +184,14 @@ async def on_message(message):
     else:
         # try to evaluate with the command handler
         try:
+            print(str(message.content))
             await ch.command_handler(message)
         # message doesn't contain a command trigger
         except TypeError as e:
             pass
         # generic python error
         except Exception as e:
-            print(e)
+            print('@client.event' + str(e))
 
 # start bot
 client.run(token)
