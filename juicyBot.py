@@ -73,7 +73,7 @@ try:
     tokenFile = open("discoToken.txt", "r") # paste bot secret token to plain .txt file
     token = tokenFile.readline()
     tokenFile.close()
-except e in Exception:
+except Exception as e:
     print(e)
 
 # create the CommandHandler object and pass it the client
@@ -146,6 +146,32 @@ ch.add_command({
     'description': 'Flips a coin and prints result'
 })
 '''
+
+# 3-reel emo slots
+
+# class Reel():
+
+def test():
+    @client.event
+
+
+def spinSlots(message, client, args):
+    try:
+        await client.send_message(message.channel, 'MORO')
+        winMessage = 'U lose sry! ;)'
+
+        return winMessage
+
+    except Exception as e:
+        print(e)
+
+ch.add_command({
+    'trigger': 'spin',
+    'function': spinSlots,
+    'args_num': 1,
+    'args_name': ['Bet amount 0.20-50'],
+    'description': 'Spin some reels! :slot_machine:'
+})
 
 # youtube link titler
 
