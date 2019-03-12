@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands
 import requests
 from bs4 import BeautifulSoup
+import random
 
 '''
 Discord bot for general help and gambling related activity
@@ -20,11 +21,13 @@ Discord bot for general help and gambling related activity
     - user based wallet
     - "juicyTokens" -economy system
     - other gambling games
+@toDo: (juicySlots)
+    - asyncio delay for winning emojis
 
 '''
 
 '''
-3-reel slots
+3-reel juicySlots
 Unicodes: U000 +
 ⭐ = :star: / 2B50
 🍑 = :peach: / 1F351
@@ -65,6 +68,8 @@ def tubeTitler(message):
         print('err_tubeLink: ' + message.content)
         print(e)
 
+# juicyReels
+
 
 @juicyBot.event
 async def on_ready():
@@ -81,8 +86,14 @@ async def spin(slots, betAmount: int):
     maxAmount = 50
 
     if (betAmount > minAmount and betAmount < maxAmount):
-        reelsMsg = await slots.send("...Spinning reels...")
-        await slots.reelsMsg.add_reaction(U0001F34D)
+        reelsMsg = await slots.send('.\n:gem: Spinning reels :gem:')
+        await reelsMsg.add_reaction("\U0001F611") # 😑
+        await reelsMsg.add_reaction("\U0001F610") # 😐
+        await reelsMsg.add_reaction("\U0001F62E") # 😮
+        winMsg = await slots.send('.\n|')
+        await winMsg.edit(content=winMsg.content + ':watermelon:')
+        await winMsg.edit(content=winMsg.content + '|:watermelon:')
+        await winMsg.edit(content=winMsg.content + '|:watermelon:|')
     else:
         # insufficient funds
         # too small/large bet
