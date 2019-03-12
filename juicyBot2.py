@@ -75,6 +75,21 @@ async def on_ready():
 async def add(ctx, a: int, b: int):
     await ctx.send(a+b)
 
+@juicyBot.command()
+async def spin(slots, betAmount: int):
+    minAmount = 0.2
+    maxAmount = 50
+
+    if (betAmount > minAmount and betAmount < maxAmount):
+        reelsMsg = await slots.send("...Spinning reels...")
+        await slots.reelsMsg.add_reaction(U0001F34D)
+    else:
+        # insufficient funds
+        # too small/large bet
+        # other ?
+        await slots.send("...error...")
+    await slots.send("you win?")
+
 
 @juicyBot.event
 async def on_message(message):
@@ -86,11 +101,14 @@ async def on_message(message):
             print(str(message.content))
             if (isYoutubeLink(message)):
                 await message.channel.send(tubeTitler(message))
+            else:
+                await juicyBot.process_commands(message)
         except TypeError as e:
             pass
         # generic python error
         except Exception as e:
             print('@juicyBot.event' + str(e))
+
 
 try:
     # paste bot secret token to plain .txt file
