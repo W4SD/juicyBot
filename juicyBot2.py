@@ -70,6 +70,24 @@ def tubeTitler(message):
 
 # juicyReels
 
+print('Creating reels')
+
+payTable = {
+    '⭐⭐⭐': 10000,
+    '🍑🍑🍑': 1000,
+    '🍊🍊🍊': 500,
+    '🍓🍓🍓': 250,
+    '🍓🍓x': 50,
+    '🍒🍒🍒': 200,
+    '🍒🍒x': 10,
+    '🍋🍋🍋': 20,
+    'x🍋🍋': 4,
+    'xx🍋': 1.4,
+    '🍉🍉🍉': 5,
+    '🍉🍉x': 3,
+    '🍉xx': 1.2,
+    '🍍🍍🍍': 1.5
+}
 
 @juicyBot.event
 async def on_ready():
@@ -85,21 +103,25 @@ async def spin(slots, betAmount: int):
     minAmount = 0.2
     maxAmount = 50
 
+    author = slots.message.author.name
+
     if (betAmount > minAmount and betAmount < maxAmount):
         reelsMsg = await slots.send('.\n:gem: Spinning reels :gem:')
         await reelsMsg.add_reaction("\U0001F611") # 😑
         await reelsMsg.add_reaction("\U0001F610") # 😐
         await reelsMsg.add_reaction("\U0001F62E") # 😮
-        winMsg = await slots.send('.\n|')
-        await winMsg.edit(content=winMsg.content + ':watermelon:')
-        await winMsg.edit(content=winMsg.content + '|:watermelon:')
-        await winMsg.edit(content=winMsg.content + '|:watermelon:|')
+        # 
+        await reelsMsg.clear_reactions()
+        await reelsMsg.edit(content=reelsMsg.content + '\n:gem: |:watermelon:')
+        await reelsMsg.edit(content=reelsMsg.content + '|:watermelon:')
+        await reelsMsg.edit(content=reelsMsg.content + '|:watermelon:| :gem:')
     else:
         # insufficient funds
         # too small/large bet
         # other ?
         await slots.send("...error...")
-    await slots.send("you win?")
+        return
+    await slots.send("{0} played {1} jC and won?".format(author, betAmount))
 
 
 @juicyBot.event
