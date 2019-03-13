@@ -6,4 +6,4 @@ mySql support coming in future to keep track of user balances and statistics.
 
 3-reel slots, dicing, coin flip, lottery
 
-Helper functions to automate some server functions like posting title preview from youtube link.
+Helper functions to add some server abilities like posting title preview from youtube link.
