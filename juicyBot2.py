@@ -23,6 +23,7 @@ Discord bot for general help and gambling related activity
     - other gambling games
 @toDo: (juicySlots)
     - asyncio delay for winning emojis
+    - win sneaking ('pihistys') if you can win with last reel, slowroll it
 
 '''
 
@@ -71,7 +72,7 @@ def tubeTitler(message):
 # juicyReels
 
 print('Creating reels')
-
+'''
 payTable = {
     '⭐⭐⭐': 10000,
     '🍑🍑🍑': 1000,
@@ -88,10 +89,73 @@ payTable = {
     '🍉xx': 1.2,
     '🍍🍍🍍': 1.5
 }
+'''
+payTable = {
+    'AAA': 10000,
+    'BBB': 1000,
+    'CCC': 500,
+    'DDD': 250,
+    'DDX': 50,
+    'EEE': 200,
+    'EEX': 10,
+    'FFF': 20,
+    'XFF': 4,
+    'XXF': 1.4,
+    'GGG': 5,
+    'GGX': 3,
+    'GXX': 1.2,
+    'HHH': 1.5
+}
+
+symbolTable = {
+    'A': '⭐',
+    'B': '🍑',
+    'C': '🍊',
+    'D': '🍓',
+    'E': '🍒',
+    'F': '🍋',
+    'G': '🍉',
+    'H': '🍍'
+
+}
+
+def populateReel(reelNo, symbolsReel):
+    currentSymbol = ''
+    currentSymbolNo = 0
+
+    for x in symbolsReel:
+        currentSymbol = symbolOrder[currentSymbolNo]
+        
+        for i in range(x):
+                reelNo.append(currentSymbol)
+        
+        currentSymbolNo += 1
+    print('reel populated!')
+
+# symbolOrder = ['⭐', '🍑', '🍊', '🍓', '🍒', '🍋', '🍉', '🍍']  
+symbolOrder = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']  
+reelOneSymbols   = [1, 5, 6, 5, 8, 18, 11, 31]
+reelTwoSymbols   = [1, 7, 4, 5, 8, 13, 14, 33]
+reelThreeSymbols = [1, 2, 6, 11, 5, 9, 18, 33]
+
+reelOne = []
+populateReel(reelOne, reelOneSymbols)
+
+reelTwo = []
+populateReel(reelTwo, reelTwoSymbols)
+
+reelThree = []
+populateReel(reelThree, reelThreeSymbols)
+
+
 
 @juicyBot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(juicyBot))
+
+@juicyBot.command()
+async def test(fruit):
+    await fruit.send('Melon: 🍉')
 
 
 @juicyBot.command()
@@ -102,26 +166,46 @@ async def add(ctx, a: int, b: int):
 async def spin(slots, betAmount: int):
     minAmount = 0.2
     maxAmount = 50
-
+    lineWin = ''
+    isWin = False
+    winAmount = 0
     author = slots.message.author.name
 
     if (betAmount > minAmount and betAmount < maxAmount):
         reelsMsg = await slots.send('.\n:gem: Spinning reels :gem:')
         await reelsMsg.add_reaction("\U0001F611") # 😑
+        reel1 = random.choice(reelOne)
+        reel1Symbol = symbolTable[reel1]
         await reelsMsg.add_reaction("\U0001F610") # 😐
+        reel2 = random.choice(reelTwo)
+        reel2Symbol = symbolTable[reel2]
         await reelsMsg.add_reaction("\U0001F62E") # 😮
+        reel3 = random.choice(reelThree)
+        reel3Symbol = symbolTable[reel3]
         # 
         await reelsMsg.clear_reactions()
-        await reelsMsg.edit(content=reelsMsg.content + '\n:gem: |:watermelon:')
-        await reelsMsg.edit(content=reelsMsg.content + '|:watermelon:')
-        await reelsMsg.edit(content=reelsMsg.content + '|:watermelon:| :gem:')
+        await reelsMsg.edit(content=reelsMsg.content + '\n:gem: |' + reel1Symbol)
+        await reelsMsg.edit(content=reelsMsg.content + '|' + reel2Symbol)
+        await reelsMsg.edit(content=reelsMsg.content + '|' + reel3Symbol + '| :gem:')
+        #
+        lineWin = reel1 + reel2 + reel3
+        print(lineWin)
     else:
         # insufficient funds
         # too small/large bet
         # other ?
-        await slots.send("...error...")
+        await slots.send('...error...')
         return
-    await slots.send("{0} played {1} jC and won?".format(author, betAmount))
+    
+    for win in payTable:
+        if (win == lineWin):
+            winAmount = betAmount * payTable[win]
+            isWin = True
+    
+    if (isWin):
+        await slots.send('{0} played {1} jC and won {2}'.format(author, betAmount, winAmount))
+    else:
+        await slots.send('{} loses :('.format(author))
 
 
 @juicyBot.event
