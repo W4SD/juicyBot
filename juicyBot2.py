@@ -24,6 +24,7 @@ Discord bot for general help and gambling related activity
 @toDo: (juicySlots)
     - asyncio delay for winning emojis
     - win sneaking ('pihistys') if you can win with last reel, slowroll it
+    - help page with payTable
 
 '''
 
