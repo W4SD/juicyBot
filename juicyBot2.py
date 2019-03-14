@@ -91,14 +91,14 @@ payTable = {
 }
 '''
 payTable = {
-    'AAA': 10000,
+    'AAA': 5000,
     'BBB': 1000,
     'CCC': 500,
-    'DDD': 250,
-    'DDX': 50,
-    'EEE': 200,
+    'DDD': 200,
+    'DDX': 30,
+    'EEE': 100,
     'EEX': 10,
-    'FFF': 20,
+    'FFF': 7,
     'XFF': 4,
     'XXF': 1.4,
     'GGG': 5,
@@ -132,11 +132,46 @@ def populateReel(reelNo, symbolsReel):
         currentSymbolNo += 1
     print('reel populated!')
 
+def getSlotsWin(lineWin, bet):
+    _winAmount = 0.00
+    lineWins = list(lineWin)
+    doubles = False
+    
+    # all symbols are same
+    for x in payTable:
+        if (x == lineWin):
+            _winAmount = bet * payTable[x]
+            return _winAmount
+    
+    # strawberry, cherry, watermelon doubles
+    if (lineWins[0] == lineWins[1]):
+        doubles = True
+        newLineWin = lineWins[0] + lineWins[1] + 'X'
+        for x in payTable:
+            if (x == newLineWin):
+                _winAmount = bet * payTable[x]
+                break
+            
+
+    # check last lemons
+    if (lineWins[2] == 'F'):
+        if (lineWins[1] == 'F'): # double lemon
+            _winAmount += bet * payTable['XFF']
+        else:
+            _winAmount += bet * payTable['XXF']
+
+    if (doubles == False):
+        if (lineWins[0] == 'G'):
+            _winAmount += bet * payTable['GXX']
+
+
+    return round(_winAmount, 2)
+
 # symbolOrder = ['⭐', '🍑', '🍊', '🍓', '🍒', '🍋', '🍉', '🍍']  
 symbolOrder = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']  
-reelOneSymbols   = [1, 5, 6, 5, 8, 18, 11, 31]
-reelTwoSymbols   = [1, 7, 4, 5, 8, 13, 14, 33]
-reelThreeSymbols = [1, 2, 6, 11, 5, 9, 18, 33]
+reelOneSymbols   = [1, 7, 8, 7, 11, 19, 14, 18]
+reelTwoSymbols   = [1, 9, 6, 7, 10, 15, 15, 22]
+reelThreeSymbols = [1, 4, 8, 13, 7, 12, 19, 21]
 
 reelOne = []
 populateReel(reelOne, reelOneSymbols)
@@ -167,7 +202,6 @@ async def spin(slots, betAmount: int):
     minAmount = 0.2
     maxAmount = 50
     lineWin = ''
-    isWin = False
     winAmount = 0
     author = slots.message.author.name
 
@@ -187,6 +221,8 @@ async def spin(slots, betAmount: int):
         await reelsMsg.edit(content=reelsMsg.content + '\n:gem: |' + reel1Symbol)
         await reelsMsg.edit(content=reelsMsg.content + '|' + reel2Symbol)
         await reelsMsg.edit(content=reelsMsg.content + '|' + reel3Symbol + '| :gem:')
+        await reelsMsg.edit(content='.\n:gem:     juicySlots     :gem:\n' + 
+            ':gem: |' + reel1Symbol + '|' + reel2Symbol + '|' + reel3Symbol + '| :gem:')
         #
         lineWin = reel1 + reel2 + reel3
         print(lineWin)
@@ -197,12 +233,10 @@ async def spin(slots, betAmount: int):
         await slots.send('...error...')
         return
     
-    for win in payTable:
-        if (win == lineWin):
-            winAmount = betAmount * payTable[win]
-            isWin = True
+    winAmount = getSlotsWin(lineWin, betAmount)
     
-    if (isWin):
+    
+    if (winAmount > 0):
         await slots.send('{0} played {1} jC and won {2}'.format(author, betAmount, winAmount))
     else:
         await slots.send('{} loses :('.format(author))
